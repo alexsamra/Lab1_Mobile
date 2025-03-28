@@ -22,9 +22,19 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Question(R.string.question_asia, true)
     )
 
-    var isCheater: Boolean
-        get() = savedStateHandle.get(IS_CHEATER_KEY) ?: false
+    private var cheatedQuestions: MutableMap<Int, Boolean>
+        get() = savedStateHandle.get<Map<Int, Boolean>>(IS_CHEATER_KEY)?.toMutableMap() ?: mutableMapOf()
         set(value) = savedStateHandle.set(IS_CHEATER_KEY, value)
+
+    val isCheaterForCurrentQuestion: Boolean
+        get() = cheatedQuestions[currentIndex] == true
+
+    fun markCurrentQuestionAsCheated() {
+        val updatedMap = cheatedQuestions
+        updatedMap[currentIndex] = true
+        cheatedQuestions = updatedMap
+        savedStateHandle.set(IS_CHEATER_KEY, cheatedQuestions) // Persist the change
+    }
 
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].answer
