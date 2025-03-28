@@ -22,9 +22,19 @@ class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(
         Question(R.string.question_asia, true)
     )
 
-    var isCheater: Boolean
-        get() = savedStateHandle.get(IS_CHEATER_KEY) ?: false
-        set(value) = savedStateHandle.set(IS_CHEATER_KEY, value)
+    private var cheatedQuestions: MutableMap<Int, Boolean> // idea taken from savedStateHandle definition
+        get() = savedStateHandle.get<Map<Int, Boolean>>(IS_CHEATER_KEY)?.toMutableMap() ?: mutableMapOf()
+        set(value) = savedStateHandle.set(IS_CHEATER_KEY, value) // Set to savedState
+
+    val isCheaterForCurrentQuestion: Boolean // Checks if the user is a cheater for the question
+        get() = cheatedQuestions[currentIndex] == true // Default is false, true if cheated
+
+    fun markCurrentQuestionAsCheated() { // Marks the question as cheated on
+        val updatedMap = cheatedQuestions
+        updatedMap[currentIndex] = true // Updates the question to show it is cheated on
+        cheatedQuestions = updatedMap
+        savedStateHandle.set(IS_CHEATER_KEY, cheatedQuestions) // Persist the change
+    }
 
     val currentQuestionAnswer: Boolean
         get() = questionBank[currentIndex].answer
