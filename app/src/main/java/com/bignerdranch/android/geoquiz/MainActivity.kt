@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val isCheater = result.data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
             if (isCheater) {
-                quizViewModel.markCurrentQuestionAsCheated()
+                quizViewModel.markCurrentQuestionAsCheated() // Marks only the current question as cheated on
             }
         }
     }
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
         val messageResId = when {
-            quizViewModel.isCheaterForCurrentQuestion -> R.string.judgment_toast
+            quizViewModel.isCheaterForCurrentQuestion -> R.string.judgment_toast // Updated to get if cheater for question
             userAnswer == correctAnswer -> R.string.correct_toast
             else -> R.string.incorrect_toast
         }
